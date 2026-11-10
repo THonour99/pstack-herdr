@@ -29,7 +29,9 @@ claude code leaves auto-update off for third-party marketplaces, so pstack stays
 
 claude code prefixes plugin commands and agents, so `/poteto-mode` is `/pstack:poteto-mode`. the [claude code adapter](./docs/harness/claude-code.md) maps every other cursor name. in claude code, `/pstack:setup-pstack` writes your model choices to `~/.claude/rules/pstack-models.md`, and a step that needs a cursor-only feature, such as bugbot or automations, is skipped with a one-line note.
 
-claude code installs a generated copy of pstack, including this readme and the guide, from [`harness/pstack/`](https://github.com/cursor/plugins/tree/main/harness/pstack) at the repository root. after you change pstack, run `node scripts/generate-pstack-harness-trees.mjs` from the repository root and commit the result. ci fails while the generated copy is out of date.
+claude code installs a generated copy of pstack, including this readme and the guide, from [`harness/pstack/claude-code/`](https://github.com/cursor/plugins/tree/main/harness/pstack/claude-code). codex installs the matching copy from [`harness/pstack/codex/`](https://github.com/cursor/plugins/tree/main/harness/pstack/codex). after you change pstack, run `node scripts/generate-pstack-harness-trees.mjs` from the repository root and commit the result. ci fails while either generated copy is out of date.
+
+in codex, copy or symlink `harness/pstack/codex/skills` into `$HOME/.agents/skills`, or into the repo's `.agents/skills`. those are the user and repo skill directories Codex reads. the [codex adapter](./docs/harness/codex.md) maps every cursor name. inside Codex, [`/setup-pstack`](./skills/setup-pstack/SKILL.md) writes the role lines into the global instructions file Codex loads: `$CODEX_HOME/AGENTS.override.md` when that file is non-empty, otherwise `$CODEX_HOME/AGENTS.md`, with `~/.codex` when `CODEX_HOME` is unset. installing this folder through a Codex marketplace was not verified. the Codex IDE extension does not load plugins.
 
 ## get started
 
