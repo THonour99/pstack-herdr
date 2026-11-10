@@ -7,6 +7,7 @@
 ## 目录
 
 - [这个 fork 改了什么](#这个-fork-改了什么)
+- [结构图](#结构图)
 - [派发怎么工作](#派发怎么工作)
 - [需要先装什么](#需要先装什么)
 - [安装](#安装)
@@ -30,6 +31,65 @@
 只装了 `hc` 和 Codex 时，表使用 `hc:codex:gpt-6-astra`、`hc:codex:gpt-6.1-sol` 和 `hc:codex:gpt-6-luna`。
 
 `harness/pstack/claude-code/` 是生成的 Claude Code 树。`harness/pstack/codex/` 是生成的 Codex 树。Codex 树带 `.codex-plugin/plugin.json`。仓库 marketplace 是 `.agents/plugins/marketplace.json`。
+
+## 结构图
+
+`pstack/skills` 是源。`scripts/generate-pstack-harness-trees.mjs` 把它复制进两棵 harness 树。`scripts/check-pstack-docs.mjs` 用这份源检查 `pstack/README.md` 和 `pstack/docs/guide`。`setup-pstack` 按当前宿主把角色表写出去。
+
+```mermaid
+flowchart TB
+  subgraph src ["pstack/skills"]
+    playbooks["poteto-mode 与 23 个剧本"]
+    principles["24 个 principle 技能"]
+    workflow["how, why, architect, arena, swarm, interrogate, reflect"]
+    verify["verify-this, control-cli, control-ui, tdd, statechart"]
+    prose["unslop, deslop, no-comments"]
+    setup["setup-pstack"]
+  end
+  agents["pstack/agents: poteto-agent, comment-sicko"]
+  docs["pstack/docs 与 pstack/README.md"]
+  gen["scripts/generate-pstack-harness-trees.mjs"]
+  check["scripts/check-pstack-docs.mjs"]
+  cc["harness/pstack/claude-code"]
+  cx["harness/pstack/codex"]
+  mClaude[".claude-plugin/marketplace.json"]
+  mCodex[".agents/plugins/marketplace.json"]
+  mCursor[".cursor-plugin/marketplace.json 指向 pstack"]
+  cursorRule["~/.cursor/rules/pstack-models.mdc"]
+  claudeRule["~/.claude/rules/pstack-models.md"]
+  codexRule["AGENTS.md 或 AGENTS.override.md"]
+  src --> gen
+  agents --> gen
+  docs --> gen
+  gen --> cc
+  gen --> cx
+  check --> src
+  mClaude --> cc
+  mCodex --> cx
+  mCursor --> src
+  setup --> cursorRule
+  setup --> claudeRule
+  setup --> codexRule
+```
+
+父会话是 Claude Code 或 Codex。`poteto-mode` 读角色表。角色是 `hc:` 并且 `hc` 在 `PATH` 上时，开一个 herdr 窗口。否则留在上游角色表。父会话自己跑验证。
+
+```mermaid
+flowchart TB
+  user["用户"]
+  orch["编排器: Claude Code 或 Codex"]
+  mode["poteto-mode, 剧本, 技能"]
+  table["setup-pstack 写出的角色表"]
+  gate{"角色是 hc 且 hc 在 PATH"}
+  hc["hc run --bg"]
+  progs["codex, grok, pi DeepSeek, claude"]
+  back["hc wait 与 hc read"]
+  parent["父会话自己跑验证"]
+  upstream["上游角色表, 没有 hc 值"]
+  user --> orch --> mode --> table --> gate
+  gate -->|是| hc --> progs --> back --> parent
+  gate -->|否| upstream --> parent
+```
 
 ## 派发怎么工作
 

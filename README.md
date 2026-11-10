@@ -7,6 +7,7 @@ This is a fork of the pstack plugin from [cursor/plugins](https://github.com/cur
 ## Contents
 
 - [What this fork changes](#what-this-fork-changes)
+- [Architecture](#architecture)
 - [How dispatch works](#how-dispatch-works)
 - [What you need installed](#what-you-need-installed)
 - [Install](#install)
@@ -30,6 +31,65 @@ When `hc`, Claude, Codex, Grok, and Pi are all installed, code roles use `hc:cod
 When only `hc` and Codex are installed, the table uses `hc:codex:gpt-6-astra`, `hc:codex:gpt-6.1-sol`, and `hc:codex:gpt-6-luna`.
 
 `harness/pstack/claude-code/` is the generated Claude Code tree. `harness/pstack/codex/` is the generated Codex tree. The Codex tree has `.codex-plugin/plugin.json`, and the repo marketplace is `.agents/plugins/marketplace.json`.
+
+## Architecture
+
+`pstack/skills` is the source. `scripts/generate-pstack-harness-trees.mjs` copies it into the two harness trees. `scripts/check-pstack-docs.mjs` checks `pstack/README.md` and `pstack/docs/guide` against that source. `setup-pstack` writes the role table for the host it is running in.
+
+```mermaid
+flowchart TB
+  subgraph src ["pstack/skills"]
+    playbooks["poteto-mode and 23 playbooks"]
+    principles["24 principle skills"]
+    workflow["how, why, architect, arena, swarm, interrogate, reflect"]
+    verify["verify-this, control-cli, control-ui, tdd, statechart"]
+    prose["unslop, deslop, no-comments"]
+    setup["setup-pstack"]
+  end
+  agents["pstack/agents: poteto-agent, comment-sicko"]
+  docs["pstack/docs and pstack/README.md"]
+  gen["scripts/generate-pstack-harness-trees.mjs"]
+  check["scripts/check-pstack-docs.mjs"]
+  cc["harness/pstack/claude-code"]
+  cx["harness/pstack/codex"]
+  mClaude[".claude-plugin/marketplace.json"]
+  mCodex[".agents/plugins/marketplace.json"]
+  mCursor[".cursor-plugin/marketplace.json to pstack"]
+  cursorRule["~/.cursor/rules/pstack-models.mdc"]
+  claudeRule["~/.claude/rules/pstack-models.md"]
+  codexRule["AGENTS.md or AGENTS.override.md"]
+  src --> gen
+  agents --> gen
+  docs --> gen
+  gen --> cc
+  gen --> cx
+  check --> src
+  mClaude --> cc
+  mCodex --> cx
+  mCursor --> src
+  setup --> cursorRule
+  setup --> claudeRule
+  setup --> codexRule
+```
+
+The parent is Claude Code or Codex. `poteto-mode` reads the role table. An `hc:` role with `hc` on `PATH` opens a herdr window. Otherwise the role stays on the upstream table. The parent runs the verification.
+
+```mermaid
+flowchart TB
+  user["user"]
+  orch["orchestrator: Claude Code or Codex"]
+  mode["poteto-mode, playbooks, skills"]
+  table["role table from setup-pstack"]
+  gate{"hc value and hc on PATH"}
+  hc["hc run --bg"]
+  progs["codex, grok, pi DeepSeek, claude"]
+  back["hc wait and hc read"]
+  parent["parent runs the verification"]
+  upstream["upstream role table, no hc values"]
+  user --> orch --> mode --> table --> gate
+  gate -->|yes| hc --> progs --> back --> parent
+  gate -->|no| upstream --> parent
+```
 
 ## How dispatch works
 
