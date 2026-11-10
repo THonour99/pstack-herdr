@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "metricool": {
-      "type": "http",
-      "url": "https://ai.metricool.com/mcp",
-      "placement": "server"
-    }
-  }
-}
