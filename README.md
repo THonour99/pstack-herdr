@@ -1,3 +1,5 @@
+English | [简体中文](README.zh-CN.md)
+
 # pstack-herdr
 
 This is a fork of the pstack plugin from [cursor/plugins](https://github.com/cursor/plugins) (author Lauren Tan, MIT), adapted so herdr can dispatch pstack roles to other agent programs. The upstream plugin README is [pstack/README.md](pstack/README.md). `pstack/LICENSE` is unchanged. The license for this repository, including the fork's modifications, is [LICENSE](LICENSE).
