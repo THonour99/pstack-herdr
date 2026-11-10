@@ -10,6 +10,9 @@ pstack skills use Cursor names. In Claude Code, read this file once per session,
 | `AskQuestion` | `AskUserQuestion`. In `-p` mode it is absent, so ask in plain text. |
 | Open a todolist | Use `TodoWrite` if the session offers it. Otherwise keep the list in your reply and update it at each phase. |
 | Run another pstack skill (`/name` or "the **name** skill") | `Read` `<pstack>/skills/<name>/SKILL.md` and follow it. The `Skill` tool refuses most pstack skills. When you tell the user to type it, write `/pstack:<name>`. |
+| `create-skill` | Cursor built-in for authoring a SKILL.md. It is not in this repo. No Claude Code equivalent was verified. Follow the playbook in prose and say the built-in is absent. |
+| `/loop` | Cursor built-in. It is not in this repo. No Claude Code equivalent was verified. Skip with the Cursor-only line. |
+| Custom Mode, option+enter or alt+enter | Cursor feature. No Claude Code equivalent was verified. Attach the skill for one message instead, and say so. |
 | `Grep`, `Glob` | `Bash` with `rg` when the session has no `Grep` or `Glob`. |
 
 ## Subagent fields

@@ -13,6 +13,7 @@
 - [快速开始](#快速开始)
 - [默认角色表](#默认角色表)
 - [技能](#技能)
+- [不随 fork 提供](#不随-fork-提供)
 - [改一个角色](#改一个角色)
 - [出了问题](#出了问题)
 - [上游和许可](#上游和许可)
@@ -76,6 +77,14 @@ setup 查找的 agent 命令是 `claude`、`codex`、`grok` 和 `pi`。Pi 跑的
 不在受信任的 git 仓库里时，Codex 会退出，并打印 `Not inside a trusted directory and --skip-git-repo-check was not specified`。把 `hc run --cwd` 指到正在改的仓库，或者在 `codex exec` 上加 `--skip-git-repo-check` 并说出来。优先用 `--cwd`。
 
 Codex CLI 0.167.0 的默认是推理力度 `xhigh`、approval `never`、sandbox `workspace-write`。这样派出去的 Codex 改文件时不会先问。简报必须写明可以动哪些文件，以及不许动什么。
+
+`git` 是 `deslop` 和各个 PR 剧本用来读 diff、挪提交的命令。这些文件没有写 git 不在时怎么办。
+
+`gh` 是 shipping、babysit、opening-a-pr 剧本的默认 forge CLI。如果 `command -v origin` 成功，并且 Origin 能解析这个仓库，这些剧本改用 `origin pr`，并说出来。它们没有写第三种 forge。它们写明不要依赖 Graphite，也就是 `gt`。
+
+`control-cli` 优先用仓库里已有的 harness。没有的话用 `tmux`。`tmux` 也不在时，用一份 PTY 脚本。`control-ui` 优先用仓库里已有的 Playwright、Cypress 或其他浏览器工具。它写明，除非你要求，不要为了这次探测去加 Playwright。
+
+`statechart` 跑的是 `scripts/statechart.ts`，所以需要一个能执行 TypeScript 的运行时。技能写明，第一次运行用 `mise` 安装 TLC 和 Java，并且需要网络。
 
 ## 安装
 
@@ -196,8 +205,20 @@ codex
 - [control-cli](pstack/skills/control-cli/SKILL.md)。搭一套本地工具，驱动、查看并分析交互式 CLI 或 TUI，不依赖外部服务。
 - [control-ui](pstack/skills/control-ui/SKILL.md)。搭一套本地浏览器或 CDP 工具，驱动并查看 web、IDE 或 Electron 界面。
 - [deslop](pstack/skills/deslop/SKILL.md)。去掉 AI 生成的代码废话，并收拾代码风格。
+- [verify-this](pstack/skills/verify-this/SKILL.md)。用新的本地证据核对一条说法，结论是 VERIFIED、NOT VERIFIED 或 INCONCLUSIVE。CLI 走 `control-cli`，界面走 `control-ui`。
 
 `how`、`why` 和 `reflect` 是 `how explorer`、`why investigators` 和 `reflect tooling` 背后的调研技能。文件是 [how](pstack/skills/how/SKILL.md)、[why](pstack/skills/why/SKILL.md) 和 [reflect](pstack/skills/reflect/SKILL.md)。
+
+## 不随 fork 提供
+
+这些名字出现在技能或指南里，本仓库没有对应文件。
+
+- `create-skill` 是 Cursor 自带的、用来写 SKILL.md 的命令。[automate-me](pstack/skills/automate-me/SKILL.md) 和写技能的剧本会调用它。没有验证过 Claude Code 或 Codex 里的对应物。
+- `/loop` 是 Cursor 自带命令。autonomous-run 和 babysit 剧本用它。没有验证过 Claude Code 或 Codex 里的对应物。
+- `/autopilot` 和 `/in-cloud` 是 Cursor 自带命令，写在 [pstack/README.md](pstack/README.md) 和指南里。在 poteto-mode 里，PR 状态走 babysit 剧本，不走 `/autopilot`。
+- `/add-plugin` 和 `/plugin` 是 Cursor 和 Claude Code 的 marketplace 命令，不是这棵树里的技能。
+
+`cursor-team-kit` 里其余技能，例如 `fix-ci` 和 `review-and-ship`，pstack 没有点名，所以这个 fork 不带它们。
 
 ## 改一个角色
 
@@ -223,7 +244,7 @@ Codex 打印 `Not inside a trusted directory and --skip-git-repo-check was not s
 
 pstack 来自 [cursor/plugins](https://github.com/cursor/plugins)。[pstack/LICENSE](pstack/LICENSE) 没有改，其中写着 `Copyright (c) 2026 Lauren Tan`。本仓库（含 fork 的修改）使用的许可是 [LICENSE](LICENSE)。它保留那一行，并加上 `Copyright (c) 2026 THonour99`。两份都是 MIT 许可。
 
-`control-cli`、`control-ui` 和 `deslop` 从上游 `cursor-team-kit` 原样复制。那个目录的 LICENSE 也是 MIT，版权行是 `Copyright (c) 2026 Cursor`。许可与上游相同。这三个文件没有写 Cursor 的 Task、Bugbot 或 cursor.com。`control-ui` 仍提到 `verify-this`，那是 `cursor-team-kit` 里的另一个技能，这次没有一起复制。
+`control-cli`、`control-ui`、`deslop` 和 `verify-this` 从上游 `cursor-team-kit` 原样复制。那个目录的 LICENSE 也是 MIT，版权行是 `Copyright (c) 2026 Cursor`。许可与上游相同。这些文件没有写 Cursor 的 Task、Bugbot 或 cursor.com。`verify-this` 点了 `control-cli` 和 `control-ui`，这两份已经在本仓库里。
 
 这个 fork 的历史是 cursor/plugins 的历史，再加上本仓库上的提交。把以后的上游提交合并进来的固定命令，没有验证过。
 
@@ -236,4 +257,5 @@ pstack 来自 [cursor/plugins](https://github.com/cursor/plugins)。[pstack/LICE
 - 在 Codex 里用哪个名字启动 `setup-pstack`，没有验证过。
 - 把以后的 [cursor/plugins](https://github.com/cursor/plugins) 提交合并进来的固定命令，没有验证过。
 - `claude` 和 `grok` 的模型参数没有核对过。别的 Pi 参数，以及 `--thinking` 的取值，也没有核对过。
+- `/loop`、`create-skill` 和 Custom Mode 在 Claude Code 或 Codex 里的对应物没有验证过。映射文档写的是跳过并说出来。
 - 更多未验证事项列在 [pstack/docs/harness/codex.md](pstack/docs/harness/codex.md) 和 [pstack/docs/harness/claude-code.md](pstack/docs/harness/claude-code.md)。

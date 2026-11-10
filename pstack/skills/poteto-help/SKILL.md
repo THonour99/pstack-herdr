@@ -111,7 +111,7 @@ Close calls:
 - `/recall` rebuilds context across recent chats. `/ketchup` covers only this chat since the user's last message. Resuming one specific chat or branch is the Session pickup playbook.
 - `/figure-it-out` designs one rigorous run. The Orchestrate playbook runs a program that spans days and many PRs. The Autonomous run playbook drives one task to a finish condition.
 
-`/deslop`, `control-cli`, and `control-ui` are in this repo, copied from upstream `cursor-team-kit`.
+`/deslop`, `control-cli`, `control-ui`, and `verify-this` are in this repo, copied from upstream `cursor-team-kit`.
 
 Not in pstack:
 

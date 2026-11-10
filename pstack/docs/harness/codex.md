@@ -18,6 +18,9 @@ Sources checked on 2026-11-10:
 | `AskQuestion` | No verified equivalent. Ask in the session. |
 | Open a todolist | No verified equivalent. Keep the list in your reply and update it at each phase. |
 | Run another pstack skill (`/name` or "the **name** skill") | `Read` `<pstack>/skills/<name>/SKILL.md` and follow it. After the skill is installed under `.agents/skills`, Codex can also select it by its `name` and `description`. |
+| `create-skill` | Cursor built-in for authoring a SKILL.md. It is not in this repo. No Codex equivalent was verified. Follow the playbook in prose and say the built-in is absent. |
+| `/loop` | Cursor built-in. It is not in this repo. No Codex equivalent was verified. Skip with the Cursor-only line. |
+| Custom Mode, option+enter or alt+enter | Cursor feature. No Codex equivalent was verified. Read the skill and follow it for this turn, and say so. |
 | `Grep`, `Glob` | Use the shell. Codex docs do not name a separate search tool here. |
 
 ## Subagent fields

@@ -13,6 +13,7 @@ This is a fork of the pstack plugin from [cursor/plugins](https://github.com/cur
 - [Quick start](#quick-start)
 - [Default role tables](#default-role-tables)
 - [Skills](#skills)
+- [Not included with this fork](#not-included-with-this-fork)
 - [Change a role](#change-a-role)
 - [When something fails](#when-something-fails)
 - [Upstream and license](#upstream-and-license)
@@ -76,6 +77,14 @@ On Windows, detection uses `command -v` in Git Bash. `hc`, `codex`, and `pi` can
 Codex exits with `Not inside a trusted directory and --skip-git-repo-check was not specified` outside a trusted git repo. Pass `--cwd` on `hc run` pointed at the repo you are editing, or add `--skip-git-repo-check` to `codex exec` and say so. Prefer `--cwd`.
 
 On Codex CLI 0.167.0 the defaults are reasoning effort `xhigh`, approval `never`, and sandbox `workspace-write`. A dispatched Codex edits files without prompting. The brief must name the files in scope and what it must not change.
+
+`git` is what `deslop` and the PR playbooks use to read the diff and to move commits. Those files do not name a fallback when `git` is missing.
+
+`gh` is the default forge CLI in the shipping, babysit, and opening-a-PR playbooks. If `command -v origin` succeeds and Origin can resolve the repository, those playbooks use `origin pr` instead and say so. They do not name a third forge. They say not to require Graphite, `gt`.
+
+`control-cli` prefers a harness already in the repo. If none exists it uses `tmux`, and if `tmux` is unavailable it uses a PTY script. `control-ui` prefers Playwright, Cypress, or another browser tool already in the repo. It says not to add Playwright unless you ask.
+
+`statechart` runs `scripts/statechart.ts`, so it needs a runtime that can execute TypeScript. The skill says the first run installs TLC and Java with `mise` and needs the network.
 
 ## Install
 
@@ -196,8 +205,20 @@ Each line is the skill's own description, shortened. The files are under [pstack
 - [control-cli](pstack/skills/control-cli/SKILL.md). Builds or adapts a local harness to drive, inspect, and profile an interactive CLI or TUI without external services.
 - [control-ui](pstack/skills/control-ui/SKILL.md). Builds or adapts a local browser or CDP harness to drive and inspect a web, IDE, or Electron UI.
 - [deslop](pstack/skills/deslop/SKILL.md). Removes AI-generated code slop and cleans up code style.
+- [verify-this](pstack/skills/verify-this/SKILL.md). Verifies a claim with fresh local evidence and returns VERIFIED, NOT VERIFIED, or INCONCLUSIVE. It uses `control-cli` for a CLI and `control-ui` for a UI.
 
 `how`, `why`, and `reflect` are the research skills behind `how explorer`, `why investigators`, and `reflect tooling`. Their files are [how](pstack/skills/how/SKILL.md), [why](pstack/skills/why/SKILL.md), and [reflect](pstack/skills/reflect/SKILL.md).
+
+## Not included with this fork
+
+These names appear in the skills or the guide, and this repo does not contain them.
+
+- `create-skill` is a Cursor built-in for writing a SKILL.md. [automate-me](pstack/skills/automate-me/SKILL.md) and the authoring playbook call it. No Claude Code or Codex equivalent was verified.
+- `/loop` is a Cursor built-in. The autonomous-run and babysit playbooks use it. No Claude Code or Codex equivalent was verified.
+- `/autopilot` and `/in-cloud` are Cursor built-ins named in [pstack/README.md](pstack/README.md) and the guide. Inside poteto-mode, PR status goes to the babysit playbook instead of `/autopilot`.
+- `/add-plugin` and `/plugin` are Cursor and Claude Code marketplace commands, not skills in this tree.
+
+The other `cursor-team-kit` skills, such as `fix-ci` and `review-and-ship`, are not named by pstack, so this fork does not include them.
 
 ## Change a role
 
@@ -223,7 +244,7 @@ The child finished and the parent has not run the verification. The task is not 
 
 pstack comes from [cursor/plugins](https://github.com/cursor/plugins). [pstack/LICENSE](pstack/LICENSE) is unchanged and says `Copyright (c) 2026 Lauren Tan`. The license for this repository, including the fork's modifications, is [LICENSE](LICENSE). It keeps that line and adds `Copyright (c) 2026 THonour99`. Both are the MIT license.
 
-`control-cli`, `control-ui`, and `deslop` are copied unchanged from upstream `cursor-team-kit`. That directory's LICENSE is also MIT and says `Copyright (c) 2026 Cursor`. The same MIT terms apply. The three files do not name Cursor Task, Bugbot, or cursor.com. `control-ui` still names `verify-this`, a `cursor-team-kit` skill this copy does not include.
+`control-cli`, `control-ui`, `deslop`, and `verify-this` are copied unchanged from upstream `cursor-team-kit`. That directory's LICENSE is also MIT and says `Copyright (c) 2026 Cursor`. The same MIT terms apply. Those files do not name Cursor Task, Bugbot, or cursor.com. `verify-this` names `control-cli` and `control-ui`, which are in this repo.
 
 This fork's history is the cursor/plugins history plus the commits on this repo. A repeatable command for merging later upstream commits was not verified.
 
@@ -236,4 +257,5 @@ This fork's history is the cursor/plugins history plus the commits on this repo.
 - The name you type to start `setup-pstack` inside Codex was not verified.
 - A repeatable command for merging later commits from [cursor/plugins](https://github.com/cursor/plugins) was not verified.
 - A model flag for the `claude` and `grok` CLIs was not verified. Other Pi flags, and a value for `--thinking`, were not verified.
+- No Claude Code or Codex equivalent for `/loop`, `create-skill`, or Custom Mode was verified. The harness docs say to skip them and say so.
 - More unverified items are listed in [pstack/docs/harness/codex.md](pstack/docs/harness/codex.md) and [pstack/docs/harness/claude-code.md](pstack/docs/harness/claude-code.md).

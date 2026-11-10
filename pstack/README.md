@@ -158,6 +158,7 @@ to keep [`/poteto-mode`](./skills/poteto-mode/SKILL.md) on across turns, pick it
 | [`/control-cli`](./skills/control-cli/SKILL.md) | you need a local harness to drive an interactive CLI or TUI. checks keyboard flows, startup, hangs, and terminal demos. |
 | [`/control-ui`](./skills/control-ui/SKILL.md) | you need a local browser or CDP harness to drive a web, IDE, or Electron UI. screenshots, accessibility snapshots, and UI bug repros. |
 | [`/deslop`](./skills/deslop/SKILL.md) | you want AI slop removed from the branch diff, and the behavior left alone. |
+| [`/verify-this`](./skills/verify-this/SKILL.md) | you want a claim checked with a baseline and a treatment. returns VERIFIED, NOT VERIFIED, or INCONCLUSIVE. |
 | [`/typescript-best-practices`](./skills/typescript-best-practices/SKILL.md) | you're reading or editing typescript. grounds the type-system-discipline principle in syntax. |
 | [`/figure-it-out`](./skills/figure-it-out/SKILL.md) | no bundled playbook fits. designs a rigorous, auditable playbook for the task. |
 | [`/show-me-your-work`](./skills/show-me-your-work/SKILL.md) | you want a reviewable decision trail. logs decisions to a tsv you can commit. |
@@ -273,7 +274,7 @@ a few things `poteto-mode` references but doesn't bundle:
 
 - `/create-skill` is a cursor built-in. cursor also ships a built-in `/autopilot` that watches a pr. inside `poteto-mode`, pr-status requests go to the [babysit playbook](./skills/poteto-mode/playbooks/babysit.md) instead.
 
-[`/deslop`](./skills/deslop/SKILL.md), [`/control-cli`](./skills/control-cli/SKILL.md), and [`/control-ui`](./skills/control-ui/SKILL.md) are in this repo, copied unchanged from upstream `cursor-team-kit`.
+[`/deslop`](./skills/deslop/SKILL.md), [`/control-cli`](./skills/control-cli/SKILL.md), [`/control-ui`](./skills/control-ui/SKILL.md), and [`/verify-this`](./skills/verify-this/SKILL.md) are in this repo, copied unchanged from upstream `cursor-team-kit`.
 
 ## why are there no planning skills?
 
