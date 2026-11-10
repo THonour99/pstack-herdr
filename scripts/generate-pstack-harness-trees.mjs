@@ -29,6 +29,7 @@ const TREES = [
       "In Codex, read [the Codex adapter](../../docs/harness/codex.md) once per session before you follow this skill. " +
       "It maps the Cursor names in pstack skills to Codex.",
     manifests: [],
+    codexPlugin: true,
   },
 ];
 const README = `# pstack harness tree
@@ -133,6 +134,25 @@ function has(files, path) {
   return files.has(path) || [...files.keys()].some((key) => key.startsWith(`${path}/`));
 }
 
+function codexPluginManifest() {
+  const plugin = JSON.parse(readFileSync(join(PSTACK, "plugin.json"), "utf8"));
+  return Buffer.from(
+    `${JSON.stringify(
+      {
+        name: "pstack",
+        version: plugin.version,
+        description: plugin.description,
+        skills: "./skills/",
+        license: plugin.license,
+        author: { name: plugin.author.name },
+        repository: "https://github.com/THonour99/pstack-herdr",
+      },
+      null,
+      2,
+    )}\n`,
+  );
+}
+
 function render(tree) {
   // Skills read the adapter, the guide, and the README at runtime, so the harness never fetches them.
   const copies = [
@@ -150,6 +170,7 @@ function render(tree) {
   }
   files.set("LICENSE", file(join(PSTACK, "LICENSE")));
   for (const manifest of tree.manifests) files.set(manifest, file(join(PSTACK, "plugin.json")));
+  if (tree.codexPlugin) files.set(".codex-plugin/plugin.json", { bytes: codexPluginManifest(), executable: false });
   for (const [path, entry] of files) {
     if (!path.endsWith(".md")) continue;
     const text = entry.bytes.toString("utf8").replace(LINK, (link, href) => {

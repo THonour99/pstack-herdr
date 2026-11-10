@@ -31,7 +31,13 @@ claude code prefixes plugin commands and agents, so `/poteto-mode` is `/pstack:p
 
 claude code installs a generated copy of pstack, including this readme and the guide, from [`harness/pstack/claude-code/`](https://github.com/cursor/plugins/tree/main/harness/pstack/claude-code). codex installs the matching copy from [`harness/pstack/codex/`](https://github.com/cursor/plugins/tree/main/harness/pstack/codex). after you change pstack, run `node scripts/generate-pstack-harness-trees.mjs` from the repository root and commit the result. ci fails while either generated copy is out of date.
 
-in codex, copy or symlink `harness/pstack/codex/skills` into `$HOME/.agents/skills`, or into the repo's `.agents/skills`. those are the user and repo skill directories Codex reads. the [codex adapter](./docs/harness/codex.md) maps every cursor name. inside Codex, [`/setup-pstack`](./skills/setup-pstack/SKILL.md) writes the role lines into the global instructions file Codex loads: `$CODEX_HOME/AGENTS.override.md` when that file is non-empty, otherwise `$CODEX_HOME/AGENTS.md`, with `~/.codex` when `CODEX_HOME` is unset. installing this folder through a Codex marketplace was not verified. the Codex IDE extension does not load plugins.
+in codex, from a shell whose git can read this private repo:
+
+```bash
+codex plugin marketplace add THonour99/pstack-herdr
+```
+
+then start Codex, open the plugins browser, install pstack, start a new session, and run [`/setup-pstack`](./skills/setup-pstack/SKILL.md). the [codex adapter](./docs/harness/codex.md) has the browser command, `marketplace list`, `upgrade`, and `remove`, and the Windows clone fallback. the IDE extension does not load plugins. if the marketplace install is unavailable, copy or symlink `harness/pstack/codex/skills` into `$HOME/.agents/skills`, or into the repo's `.agents/skills`.
 
 ## get started
 

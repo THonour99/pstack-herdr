@@ -92,7 +92,7 @@ Follow `setup-pstack` with these changes:
 | Cursor | Codex |
 | --- | --- |
 | `.cursor/skills/`, `~/.cursor/skills/` | Repo skills: `.agents/skills`, scanned from the working directory up to the repo root. User skills: `$HOME/.agents/skills`. Admin skills: `/etc/codex/skills`. Each skill is a directory whose `SKILL.md` has `name` and `description`. Codex reads that metadata first and loads `SKILL.md` when it selects the skill. |
-| `~/.cursor/plugins/`, `.cursor-plugin/plugin.json` | Codex CLI opens a plugins browser with its plugins command and installs from a configured marketplace. The IDE extension does not support plugins. Installing this generated tree as a local plugin was not verified. Copy or symlink `harness/pstack/codex/skills` into `$HOME/.agents/skills` or the repo `.agents/skills`. |
+| `~/.cursor/plugins/`, `.cursor-plugin/plugin.json` | See Install. The IDE extension does not load plugins. |
 | `.cursor/rules/*.mdc`, always-applied rules | Global instructions in Codex home (`~/.codex` unless `CODEX_HOME` is set): `AGENTS.override.md` if that file exists and is non-empty, otherwise `AGENTS.md`. Project instructions are `AGENTS.override.md`, then `AGENTS.md`, then names in `project_doc_fallback_filenames`, from the repo root down to the working directory. One file per directory. Closer directories are later in the prompt. |
 | `https://github.com/cursor/plugins/blob/main/pstack/<path>` | `<pstack>/<path>` when that file exists. Read the local copy. |
 | Transcripts in `~/.cursor/projects/<slug>/agent-transcripts/` | No Codex transcript path was verified. Do not invent one. |
@@ -101,11 +101,36 @@ Follow `setup-pstack` with these changes:
 
 Codex has no Cursor Automations, Bugbot, or Cursor cloud agents. When a step needs one, put one line in your reply, `Skipped in Codex: <step>. <reason>.`, then go on. Do not stop, ask, or retry.
 
+## Install
+
+The repo marketplace is `.agents/plugins/marketplace.json`. Its one entry, `pstack`, points at `./harness/pstack/codex`, which carries `.codex-plugin/plugin.json` with `skills` set to `./skills/`.
+
+From a shell whose git can already read this private repo:
+
+```bash
+codex plugin marketplace add THonour99/pstack-herdr
+```
+
+Other documented source forms are `owner/repo --ref main`, an HTTPS or SSH git URL, and `codex plugin marketplace add .` from a local checkout. Repeat `--sparse PATH` only for a git source. Then:
+
+```bash
+codex
+/plugins
+```
+
+Install `pstack`, start a new session, and run setup-pstack. The pages document `codex plugin marketplace list`, `upgrade`, and `remove`. They do not document a shell `codex plugin install`. The IDE extension does not load plugins.
+
+If that install is unavailable, copy or symlink `harness/pstack/codex/skills` into `$HOME/.agents/skills` or the repo `.agents/skills`.
+
+One third-party report says that on Windows `codex plugin marketplace add owner/repo` failed inside Codex's git staging clone, and `git clone` plus `codex plugin marketplace add .` worked. That report was not rechecked here.
+
 ## Unverified
 
+- Whether `codex plugin marketplace add` of this private repo succeeds. The docs show `owner/repo` and git URLs. They do not say how private-repo credentials are passed. Git still needs read access before the add.
+- Whether Codex CLI also loads this repo's `.claude-plugin/marketplace.json`. The build guide says the ChatGPT desktop app can read that path as a legacy marketplace. This file was left as the Claude Code catalog. It was not checked as a second Codex marketplace.
+- The allowed `category` strings. The example value is `Productivity`. This marketplace uses `Developer Tools`.
 - Whether Codex still loads skills from `~/.codex/skills`. The verified user path is `$HOME/.agents/skills`.
 - The `model_reasoning_effort` spelling of High, Extra High, Max, and Ultra. Verified spellings from the docs are `low` and `medium`. Codex CLI 0.167.0 on the test machine was already set to `xhigh`. That observed value is not a documented enum entry.
 - Model flags for the `claude` and `grok` CLIs. Pi's `--model`, `--thinking`, and `-p` are verified. Other Pi flags are not, and neither is the value syntax of `--thinking`.
 - A Codex path for session transcripts.
-- Installing `harness/pstack/codex` itself as a marketplace plugin.
 - A probe that proves the current process is Codex.
