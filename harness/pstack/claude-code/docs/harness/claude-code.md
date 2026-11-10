@@ -32,7 +32,8 @@ pstack skills use Cursor names. In Claude Code, read this file once per session,
 | Cursor | Claude Code |
 | --- | --- |
 | `claude-<family>-<version>-<effort>[-fast]`, such as `claude-opus-5-5-xhigh` | `model: "opus"` and `effort: "xhigh"`. `model` takes only `opus`, `sonnet`, `haiku`, `fable`. Drop `-fast`. |
-| A `grok-*`, `gpt-*`, or other non-Claude slug | Omit `model` so the agent runs on the session model, and say so. |
+| A `grok-*`, `gpt-*`, or other non-Claude slug | If `hc` and a program matching the slug family are installed (`grok-*` to `grok`, `gpt-*` to `codex`), treat the role as `hc:<program>`. Otherwise omit `model` so the agent runs on the session model, and say so. |
+| `hc:<program>`, such as `hc:codex` or `hc:grok` | Do not spawn an Agent subagent. Open a named herdr window with `hc run --bg --name <short-name> <program> ...`, brief it, then `hc wait` and `hc read`. Verify the result yourself. If `hc` or the program is missing, say so and fall back to `inherit-parent`. Never do the work silently. |
 | `auto` or `inherit-parent` | Omit `model`. |
 | The `pstack-models.mdc` rule, `~/.cursor/rules/pstack-models.mdc` | `~/.claude/rules/pstack-models.md`. Claude Code loads it into every new session, so its role lines are already in context. If they are not, read the file. If the file or the role's line is missing, use the skill's default slug. |
 | A role value `<model> <effort>`, such as `opus high` | `model: "opus"` and `effort: "high"`. |
@@ -41,9 +42,9 @@ pstack skills use Cursor names. In Claude Code, read this file once per session,
 
 Claude Code loads every `.md` file in `~/.claude/rules/` into each new session, so `setup-pstack` writes its rule there. Follow its steps with these changes:
 
-- Detect. The detected models are the `model` values that the `Agent` tool schema lists, each with an effort from its `effort` values. Write a real model as `<model> <effort>`, such as `opus xhigh`. The effort is the last token, so the budget step works as written.
-- Defaults. Map each default slug with the rows above: `claude-opus-5-5-xhigh` is `opus xhigh`, and `grok-4.7-xhigh-fast` is `inherit-parent`.
-- Write. Write `~/.claude/rules/pstack-models.md` with no frontmatter, then the comment lines, the `# budget` line, and one line per role from step 5. Overwrite the whole file. Never put the role lines in `CLAUDE.md` or `AGENTS.md`.
+- Detect. The detected models are the `model` values that the `Agent` tool schema lists, each with an effort from its `effort` values. Write a real model as `<model> <effort>`, such as `opus xhigh`. The effort is the last token, so the budget step works as written. Also run `command -v` for `claude`, `codex`, `grok`, `cursor-agent`, `cursor`, `opencode`, `hc`, and `herdr`. `hc:<program>` is a valid value only when both `hc` and that program were found.
+- Defaults. When `hc` is absent, map each default slug with the rows above. `claude-opus-5-5-xhigh` is `opus xhigh`, and `grok-4.7-xhigh-fast` is `inherit-parent`. When `hc` is present, keep judgment, prose, hardest tasks, and synthesizer roles on the Claude model. Code roles (`feature, refactoring`, `bug-fix`, `perf-issue`, `hillclimb`, `swarm workers`) use `hc:codex` when `codex` is installed. Research roles (`how explorer`, `why investigators`, `reflect tooling`) use `hc:grok` when `grok` is installed, else `inherit-parent`. Panel roles (`arena runners`, `arena cross-judge pool`, `architect runners`, `interrogate reviewers`) mix one Claude entry with `hc:` entries for each installed program among `codex`, `grok`, `cursor`, and `opencode`.
+- Write. Write `~/.claude/rules/pstack-models.md` with no frontmatter, then the comment lines, a `# agents: <detected list>` line, the `# budget` line, and one line per role from step 5. Overwrite the whole file. Never put the role lines in `CLAUDE.md` or `AGENTS.md`.
 
 ## Paths
 

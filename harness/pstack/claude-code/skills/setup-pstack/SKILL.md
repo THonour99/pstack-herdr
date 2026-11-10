@@ -15,9 +15,11 @@ Write `~/.cursor/rules/pstack-models.mdc`, an always-applied rule that sets psta
 
 Enumerate the model slugs you can pass to a `Task` subagent in this session. That is the dependable source. If Cursor also exposes a models API or CLI that lists the user's entitled models, prefer it for completeness. If you cannot detect any, ask the user to paste the slugs they have access to. Never write a real slug you have not confirmed is available. The aliases `inherit-parent` and `auto` are always valid even though they are not detected slugs.
 
+Also detect the agent CLIs on this machine. Run `command -v` for `claude`, `codex`, `grok`, `cursor-agent`, `cursor`, and `opencode`. Also run `command -v hc herdr`. Record every command that resolves. Treat `cursor-agent` and `cursor` as the `cursor` program. A value `hc:<program>` (such as `hc:codex` or `hc:grok`) is valid only when both `hc` and that program were found, the same way a detected slug is valid. Never write an `hc:` value for a program you have not confirmed.
+
 ### 2. Load current state
 
-The default role-to-model mapping is the rule shape shown in step 5 below. If `~/.cursor/rules/pstack-models.mdc` already exists, read it and treat its `# budget` line and its role values as the current choices. Otherwise start from those defaults. A line whose role is not in step 5, such as `how critics`, is from a retired role. Drop it.
+The default role-to-model mapping is the no-`hc` shape in step 5, unless step 3 says otherwise. If `~/.cursor/rules/pstack-models.mdc` already exists, read it and treat its `# budget` line and its role values as the current choices. Re-detect agents on every run. The `# agents:` comment is informational and is rewritten from this run's detection. Otherwise start from those defaults. A line whose role is not in step 5, such as `how critics`, is from a retired role. Drop it.
 
 ### 3. Budget, map, and confirm
 
@@ -28,17 +30,24 @@ The default role-to-model mapping is the rule shape shown in step 5 below. If `~
 - `medium — high reasoning`
 - `small — medium reasoning`
 
-**(b) Apply it.** Build the working table from the skill defaults, and on a re-run keep any role you changed by family, list, or alias (`inherit-parent`, `auto`). `unlimited`, `large`, `medium`, and `small` set the effort token of every real slug, panel entries included, to `max`, `xhigh`, `high`, or `medium`. The effort token is the last token, or the one before a trailing `fast`, on the ladder `max` > `xhigh` > `high` > `medium` > `low`. If the result is not a detected slug, use the same family's detected slug with the highest effort at or below the target, else mark the role as needing a choice. `inherit-parent` and `auto` do not change. So `unlimited` turns `claude-opus-5-5-xhigh` into `claude-opus-5-5-max`. Grok slugs top out at `xhigh`, so under `unlimited` the fallback puts Grok at `xhigh` and keeps `grok-4.7-xhigh-fast` as it is. `large` keeps both defaults. `small` turns them into `claude-opus-5-5-medium` and `grok-4.7-medium-fast`.
+**(b) Apply it.** Build the working table from the skill defaults, and on a re-run keep any role you changed by family, list, or alias (`inherit-parent`, `auto`, or `hc:<program>`). When there is no existing rule and `hc` was found, start from the `hc` defaults below instead of the no-`hc` shape in step 5.
 
-**(c) Show the roles and confirm.** Show every role with its model, marking any real slug not in the detected set as needing a choice. Also list each line step 2 dropped. Ask whether to accept as-is or change specific roles, offering the detected models plus `inherit-parent` and `auto` (both mean: this role runs on the parent chat model, which is how Auto users stay on Auto) as the options. Prefer AskQuestion over free text. For panel roles (arena runners, architect runners, interrogate reviewers) the value is a list, and one subagent runs per entry, alias entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena runs one judge. It tries only values from a family other than the parent's, in list order, so order it by preference. An `inherit-parent` or `auto` value never judges. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
+- Code roles (`feature, refactoring`, `bug-fix`, `perf-issue`, `hillclimb`, `swarm workers`) use `hc:codex` when `codex` is installed. Otherwise they keep the skill default.
+- Research roles (`how explorer`, `why investigators`, `reflect tooling`) use `hc:grok` when `grok` is installed, and `inherit-parent` otherwise.
+- Judgment, prose, hardest tasks, and synthesizer roles (`judgment and prose`, `hardest tasks`, `how explainer`, `why synthesizer`, `reflect judgment, divergent, synthesizer`) stay on the Claude model.
+- Panel roles (`arena runners`, `arena cross-judge pool`, `architect runners`, `interrogate reviewers`) mix one Claude entry with an `hc:<program>` entry for each of `codex`, `grok`, `cursor`, and `opencode` that was found.
+
+When `hc` was not found, the defaults are unchanged. `unlimited`, `large`, `medium`, and `small` set the effort token of every real slug, panel entries included, to `max`, `xhigh`, `high`, or `medium`. The effort token is the last token, or the one before a trailing `fast`, on the ladder `max` > `xhigh` > `high` > `medium` > `low`. If the result is not a detected slug, use the same family's detected slug with the highest effort at or below the target, else mark the role as needing a choice. `inherit-parent`, `auto`, and `hc:<program>` do not change. So `unlimited` turns `claude-opus-5-5-xhigh` into `claude-opus-5-5-max`. Grok slugs top out at `xhigh`, so under `unlimited` the fallback puts Grok at `xhigh` and keeps `grok-4.7-xhigh-fast` as it is. `large` keeps both defaults. `small` turns them into `claude-opus-5-5-medium` and `grok-4.7-medium-fast`.
+
+**(c) Show the roles and confirm.** Show every role with its model, marking any real slug not in the detected set as needing a choice. Also list each line step 2 dropped, and the agents found in step 1. Ask whether to accept as-is or change specific roles, offering the detected models, each valid `hc:<program>` value, plus `inherit-parent` and `auto` (both mean this role runs on the parent chat model, which is how Auto users stay on Auto) as the options. Prefer AskQuestion over free text. For panel roles (arena runners, architect runners, interrogate reviewers) the value is a list, and one worker runs per entry, alias and `hc:` entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena runs one judge. It tries only values from a family other than the parent's, in list order, so order it by preference. An `inherit-parent` or `auto` value never judges. An `hc:<program>` value may judge when it is a different program from the parent. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
 
 ### 4. Validate
 
-Every real slug written must be in the detected set. `inherit-parent` and `auto` always pass. If a chosen real slug is not available, stop and ask again.
+Every real slug written must be in the detected set. `inherit-parent` and `auto` always pass. An `hc:<program>` value passes only when both `hc` and that program were detected in step 1. If a chosen real slug or `hc:` value is not available, stop and ask again.
 
 ### 5. Write the rule
 
-Write `~/.cursor/rules/pstack-models.mdc` with `alwaysApply: true`, a `# budget` line with the chosen label and its target effort, and one line per role, using the same labels poteto-mode uses. Overwrite the whole file so re-runs stay idempotent. Shape:
+Write `~/.cursor/rules/pstack-models.mdc` with `alwaysApply: true`, a `# agents: <detected list>` comment (the resolved commands from step 1, in this order when present, `hc`, `herdr`, `claude`, `codex`, `grok`, `cursor`, `opencode`, or `none` if nothing resolved), a `# budget` line with the chosen label and its target effort, and one line per role, using the same labels poteto-mode uses. Overwrite the whole file so re-runs stay idempotent. When `hc` was not found, the role lines stay the no-`hc` shape below. When `hc`, `codex`, and `grok` were found, use the second shape. Shape when `hc` is absent:
 
 ```
 ---
@@ -47,6 +56,8 @@ alwaysApply: true
 ---
 # pstack model configuration. One line per role. Delete a line to fall back to the skill default.
 # `inherit-parent` or `auto` as a value: the role runs on the parent chat model (omit Task `model`). Alias entries in a panel list still count toward its fan-out.
+# `hc:<program>` as a value: do not spawn a Task subagent. Open a named herdr window with that program, then verify the result yourself. See the Subagents section of poteto-mode.
+# agents: none
 # budget: large (xhigh)
 feature, refactoring: grok-4.7-xhigh-fast
 bug-fix: grok-4.7-xhigh-fast
@@ -65,6 +76,30 @@ arena cross-judge pool: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
 swarm workers: grok-4.7-xhigh-fast
 architect runners: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
 interrogate reviewers: claude-opus-5-5-xhigh, grok-4.7-xhigh-fast
+```
+
+Shape when `hc`, `codex`, and `grok` were found. Keep the same frontmatter, comment lines, and `# budget` line, and set `# agents:` to the detected list:
+
+```
+# agents: hc, herdr, claude, codex, grok
+# budget: large (xhigh)
+feature, refactoring: hc:codex
+bug-fix: hc:codex
+perf-issue: hc:codex
+hillclimb: hc:codex
+judgment and prose: claude-opus-5-5-xhigh
+hardest tasks: claude-opus-5-5-xhigh
+how explorer: hc:grok
+how explainer: claude-opus-5-5-xhigh
+why investigators: hc:grok
+why synthesizer: claude-opus-5-5-xhigh
+reflect tooling: hc:grok
+reflect judgment, divergent, synthesizer: claude-opus-5-5-xhigh
+arena runners: claude-opus-5-5-xhigh, hc:codex, hc:grok
+arena cross-judge pool: claude-opus-5-5-xhigh, hc:codex, hc:grok
+swarm workers: hc:codex
+architect runners: claude-opus-5-5-xhigh, hc:codex, hc:grok
+interrogate reviewers: claude-opus-5-5-xhigh, hc:codex, hc:grok
 ```
 
 ### 6. Confirm

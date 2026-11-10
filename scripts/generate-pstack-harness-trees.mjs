@@ -42,6 +42,7 @@ const TERMS = [
   { key: "grok-", re: /\bgrok-\d/ },
   { key: "gpt-", re: /\bgpt-\d/ },
   { key: "inherit-parent", re: /inherit-parent/ },
+  { key: "`hc:<program>`", re: /hc:</ },
   { key: "pstack-models.mdc", re: /pstack-models\.mdc/ },
   { key: ".cursor/skills/", re: /\.cursor\/skills/ },
   { key: "~/.cursor/plugins/", re: /\.cursor\/plugins|\.cursor-plugin/ },
