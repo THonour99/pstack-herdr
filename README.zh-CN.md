@@ -193,6 +193,9 @@ codex
 - [tdd](pstack/skills/tdd/SKILL.md)。只在你明确要求 TDD 或先写失败测试时使用，或者这个 bug 有一条便宜的本地测试。测试会很贵或说不清时跳过。
 - [unslop](pstack/skills/unslop/SKILL.md)。从文字里去掉 AI 腔。
 - [no-comments](pstack/skills/no-comments/SKILL.md)。派出 Comment Sicko，修掉接受的发现，并为声称的约束提供编码方式。
+- [control-cli](pstack/skills/control-cli/SKILL.md)。搭一套本地工具，驱动、查看并分析交互式 CLI 或 TUI，不依赖外部服务。
+- [control-ui](pstack/skills/control-ui/SKILL.md)。搭一套本地浏览器或 CDP 工具，驱动并查看 web、IDE 或 Electron 界面。
+- [deslop](pstack/skills/deslop/SKILL.md)。去掉 AI 生成的代码废话，并收拾代码风格。
 
 `how`、`why` 和 `reflect` 是 `how explorer`、`why investigators` 和 `reflect tooling` 背后的调研技能。文件是 [how](pstack/skills/how/SKILL.md)、[why](pstack/skills/why/SKILL.md) 和 [reflect](pstack/skills/reflect/SKILL.md)。
 
@@ -219,6 +222,8 @@ Codex 打印 `Not inside a trusted directory and --skip-git-repo-check was not s
 ## 上游和许可
 
 pstack 来自 [cursor/plugins](https://github.com/cursor/plugins)。[pstack/LICENSE](pstack/LICENSE) 没有改，其中写着 `Copyright (c) 2026 Lauren Tan`。本仓库（含 fork 的修改）使用的许可是 [LICENSE](LICENSE)。它保留那一行，并加上 `Copyright (c) 2026 THonour99`。两份都是 MIT 许可。
+
+`control-cli`、`control-ui` 和 `deslop` 从上游 `cursor-team-kit` 原样复制。那个目录的 LICENSE 也是 MIT，版权行是 `Copyright (c) 2026 Cursor`。许可与上游相同。这三个文件没有写 Cursor 的 Task、Bugbot 或 cursor.com。`control-ui` 仍提到 `verify-this`，那是 `cursor-team-kit` 里的另一个技能，这次没有一起复制。
 
 这个 fork 的历史是 cursor/plugins 的历史，再加上本仓库上的提交。把以后的上游提交合并进来的固定命令，没有验证过。
 

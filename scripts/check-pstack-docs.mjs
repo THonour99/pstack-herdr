@@ -39,8 +39,7 @@ const principles = skills.filter((name) => name.startsWith("principle-"));
 const commands = skills.filter((name) => !name.startsWith("principle-"));
 const playbooks = names(join(PSTACK, "skills", "poteto-mode", "playbooks"), isMarkdown).map((name) => name.slice(0, -3));
 const agents = names(join(PSTACK, "agents"), isMarkdown).map((name) => name.slice(0, -3));
-// This fork does not ship cursor-team-kit. pstack docs still name /deslop, which that plugin ships.
-const teamKit = ["deslop"];
+const teamKit = [];
 const docs = ["README.md", ...names(join(PSTACK, GUIDE), isMarkdown).map((name) => `${GUIDE}/${name}`)];
 const text = new Map(docs.map((doc) => [doc, readFileSync(join(PSTACK, doc), "utf8")]));
 const setup = readFileSync(SETUP, "utf8");

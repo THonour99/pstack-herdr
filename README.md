@@ -193,6 +193,9 @@ Each line is the skill's own description, shortened. The files are under [pstack
 - [tdd](pstack/skills/tdd/SKILL.md). Use it when you ask for TDD or a failing test, or when the bug has a cheap local test. Skip it when the test would be expensive or unclear.
 - [unslop](pstack/skills/unslop/SKILL.md). Cuts AI tells from writing.
 - [no-comments](pstack/skills/no-comments/SKILL.md). Spawns Comment Sicko, fixes accepted findings, and offers encodings for claimed constraints.
+- [control-cli](pstack/skills/control-cli/SKILL.md). Builds or adapts a local harness to drive, inspect, and profile an interactive CLI or TUI without external services.
+- [control-ui](pstack/skills/control-ui/SKILL.md). Builds or adapts a local browser or CDP harness to drive and inspect a web, IDE, or Electron UI.
+- [deslop](pstack/skills/deslop/SKILL.md). Removes AI-generated code slop and cleans up code style.
 
 `how`, `why`, and `reflect` are the research skills behind `how explorer`, `why investigators`, and `reflect tooling`. Their files are [how](pstack/skills/how/SKILL.md), [why](pstack/skills/why/SKILL.md), and [reflect](pstack/skills/reflect/SKILL.md).
 
@@ -219,6 +222,8 @@ The child finished and the parent has not run the verification. The task is not 
 ## Upstream and license
 
 pstack comes from [cursor/plugins](https://github.com/cursor/plugins). [pstack/LICENSE](pstack/LICENSE) is unchanged and says `Copyright (c) 2026 Lauren Tan`. The license for this repository, including the fork's modifications, is [LICENSE](LICENSE). It keeps that line and adds `Copyright (c) 2026 THonour99`. Both are the MIT license.
+
+`control-cli`, `control-ui`, and `deslop` are copied unchanged from upstream `cursor-team-kit`. That directory's LICENSE is also MIT and says `Copyright (c) 2026 Cursor`. The same MIT terms apply. The three files do not name Cursor Task, Bugbot, or cursor.com. `control-ui` still names `verify-this`, a `cursor-team-kit` skill this copy does not include.
 
 This fork's history is the cursor/plugins history plus the commits on this repo. A repeatable command for merging later upstream commits was not verified.
 
